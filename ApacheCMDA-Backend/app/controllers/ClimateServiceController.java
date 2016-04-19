@@ -47,7 +47,7 @@ import util.RepoFactory;
  */
 @Named
 @Singleton
-public class ClimateServiceController extends Controller {
+public class ClimateServiceController extends AbstractAllController {
 	private final int initialcount = 0;
 
 	// static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ssz";
@@ -356,7 +356,7 @@ public class ClimateServiceController extends Controller {
 
 		return ok(result);
 	}
-
+	
     public Object getIterator() {
         return climateServiceRepository.findAll();
     }
