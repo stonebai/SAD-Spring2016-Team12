@@ -44,17 +44,15 @@ import java.util.*;
 @Singleton
 public class UserController extends AbstractAllController {
 
-	private final UserRepository userRepository;
-
 	// We are using constructor injection to receive a repository to support our
 	// desire for immutability.
 	@Inject
 	public UserController(final UserRepository userRepository) {
 		RepoFactory.putRepo(Constants.USER_REPO, userRepository);
-		this.userRepository = userRepository;
 	}
 
 	public Result userRegister() {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		JsonNode json = request().body().asJson();
 		if (json == null) {
 			System.out.println("User not created, expecting Json data");
@@ -85,6 +83,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result userLogin() {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		JsonNode json = request().body().asJson();
 		if (json == null) {
 			System.out.println("Cannot check user, expecting Json data");
@@ -128,6 +127,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result deleteUser(Long id) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		User deleteUser = userRepository.findOne(id);
 		if (deleteUser == null) {
 			System.out.println("User not found with id: " + id);
@@ -140,6 +140,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result setProfile(long id) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		JsonNode json = request().body().asJson();
 		if (json == null) {
 			System.out.println("User not saved, expecting Json data");
@@ -166,6 +167,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result getProfile(Long id, String format) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		if (id == null) {
 			System.out.println("User id is null or empty!");
 			return Common.badRequestWrapper("User id is null or empty!");
@@ -213,6 +215,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result getAllUsers(String format) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		Iterable<User> userIterable = userRepository.findAll();
 		List<User> userList = new ArrayList<User>();
 		for (User user : userIterable) {
@@ -226,6 +229,7 @@ public class UserController extends AbstractAllController {
 	}
 	
 	public Result deleteUserByUserNameandPassword(String userName, String password) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try {
 			List<User> users = userRepository.findByUserName(userName);
 			if (users.size()==0) {
@@ -251,6 +255,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result userSearch(String display_name, String format) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		if (display_name == null) {
 			System.out.println("Display name is null or empty!");
 			return Common.badRequestWrapper("Display name is null or empty!");
@@ -279,6 +284,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result userFollow(Long userId, Long followeeId){
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try{
 			if(userId==null){
 				System.out.println("Follower id is null or empty!");
@@ -312,6 +318,7 @@ public class UserController extends AbstractAllController {
 	}
 
     public Result userUnfollow(Long userId, Long followeeId){
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
         try{
             if(userId==null){
                 System.out.println("Follower id is null or empty!");
@@ -347,6 +354,7 @@ public class UserController extends AbstractAllController {
     }
 
 	public Result getFollowers(Long id){
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try{
 			if(id==null){
 				System.out.println("User id is null or empty!");
@@ -381,6 +389,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result getFollowees(Long id){
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try{
 			if(id==null){
 				System.out.println("User id is null or empty!");
@@ -415,6 +424,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result sendFriendRequest(Long senderId, Long receiverId) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try {
 			if(receiverId==null){
 				System.out.println("User id is null or empty!");
@@ -450,6 +460,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result getFriendRequests(Long id) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try{
 			if(id==null){
 				System.out.println("User id is null or empty!");
@@ -484,6 +495,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result acceptFriendRequest(Long receiverId, Long senderId) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try {
 			if(receiverId==null){
 				System.out.println("User id is null or empty!");
@@ -544,6 +556,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result rejectFriendRequest(Long receiverId, Long senderId) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try {
 			if(receiverId==null){
 				System.out.println("User id is null or empty!");
@@ -592,6 +605,7 @@ public class UserController extends AbstractAllController {
 
 
 	public Result getFriends(Long userId) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		if(userId==null){
 			System.out.println("User id is null or empty!");
 			return badResponse("User id is null or empty");
@@ -622,6 +636,7 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result deleteFriend(Long userId, Long friendId) {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		if(userId==null){
 			System.out.println("User id is null or empty!");
 			return badResponse("User id is null or empty");
