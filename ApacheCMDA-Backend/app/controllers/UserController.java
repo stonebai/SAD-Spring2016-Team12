@@ -42,7 +42,7 @@ import java.util.*;
  */
 @Named
 @Singleton
-public class UserController extends Controller {
+public class UserController extends AbstractAllController {
 
 	private final UserRepository userRepository;
 
@@ -190,6 +190,28 @@ public class UserController extends Controller {
 		return ok(result);
 	}
 	
+	@Override
+	public Object getIterator() {
+		return userRepository.findAll();
+	}
+
+	@Override
+	public void printNotFound() {
+		System.out.println("No user found");
+	}
+
+	@Override
+	public String getResult(String format, Object iterator) {
+		Iterable<User> userIterator = (Iterable<User>)iterator;
+		List<User> userList = new ArrayList<User>();
+		for (User object : userIterator) {
+			userList.add((User) object);
+		}
+		String result = new String();
+		result = new GsonBuilder().excludeFieldsWithModifiers(Modifier.PROTECTED).create().toJson(userList);
+		return result;
+	}
+
 	public Result getAllUsers(String format) {
 		Iterable<User> userIterable = userRepository.findAll();
 		List<User> userList = new ArrayList<User>();

@@ -22,14 +22,14 @@ DELETE        /climateService/deleteClimateService/id/:id                       
 DELETE        /climateService/deleteClimateService/name/:name                                           @controllers.ClimateServiceController.deleteClimateServiceByName(name: String)
 
 # Instrument
-GET           /instrument/getAllInstruments/json                                                        @controllers.InstrumentController.getAllInstruments(format: String="json")
+GET           /instrument/getAllInstruments/json                                                        @controllers.InstrumentController.getAll(format: String="json")
 GET           /instrument/getInstrument/id/:id/json                                                     @controllers.InstrumentController.getInstrument(id: Long, format: String="json")
 POST          /instrument/addInstrument                                                                 @controllers.InstrumentController.addInstrument
 PUT           /instrument/updateInstrument/id/:id                                                       @controllers.InstrumentController.updateInstrumentById(id: Long)
 DELETE        /instrument/deleteInstrument/id/:id                                                       @controllers.InstrumentController.deleteInstrument(id: Long)
 
 # Dataset
-GET           /dataset/getAllDatasets/json                                                              @controllers.DatasetController.getAllDatasets(format: String="json")
+GET           /dataset/getAllDatasets/json                                                              @controllers.DatasetController.getAll(format: String="json")
 GET           /dataset/getDataset/id/:id/json                                                           @controllers.DatasetController.getDataset(id: Long, format: String="json")
 POST          /dataset/addDataset                                                                       @controllers.DatasetController.addDataset
 PUT           /dataset/updateDataset/id/:id                                                             @controllers.DatasetController.updateDatasetById(id: Long)
@@ -47,7 +47,7 @@ DELETE        /parameter/deleteParameter/service/:id/name/:name                 
 
 # Users
 DELETE        /users/delete/:id                                                                          @controllers.UserController.deleteUser(id: Long)
-GET			  /users/getAllUsers/json																	 @controllers.UserController.getAllUsers(format: String="json")
+GET			  /users/getAllUsers/json																	 @controllers.UserController.getAll(format: String="json")
 DELETE		  /users/delete/userName/:userName/password/:password										 @controllers.UserController.deleteUserByUserNameandPassword(userName: String, password: String)
 
 POST          /users/register                                                                            @controllers.UserController.userRegister
