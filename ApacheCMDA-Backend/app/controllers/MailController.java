@@ -31,6 +31,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import util.Common;
+import util.Constants;
+import util.RepoFactory;
 
 @Named
 @Singleton
@@ -43,6 +45,8 @@ public class MailController extends Controller {
     @Inject
     public MailController(final MailRepository mailRepository,
                           UserRepository userRepository) {
+        RepoFactory.putRepo(Constants.MAIL_REPO, mailRepository);
+        RepoFactory.putRepo(Constants.USER_REPO, userRepository);
         this.mailRepository = mailRepository;
         this.userRepository = userRepository;
     }

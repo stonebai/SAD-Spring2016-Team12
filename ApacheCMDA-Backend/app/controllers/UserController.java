@@ -25,6 +25,8 @@ import models.UserRepository;
 import play.mvc.Controller;
 import play.mvc.Result;
 import util.Common;
+import util.Constants;
+import util.RepoFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,6 +50,7 @@ public class UserController extends Controller {
 	// desire for immutability.
 	@Inject
 	public UserController(final UserRepository userRepository) {
+		RepoFactory.putRepo(Constants.USER_REPO, userRepository);
 		this.userRepository = userRepository;
 	}
 

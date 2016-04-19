@@ -29,6 +29,8 @@ import com.google.gson.Gson;
 import models.Instrument;
 import models.InstrumentRepository;
 import play.mvc.*;
+import util.Constants;
+import util.RepoFactory;
 
 @Named
 @Singleton
@@ -38,6 +40,7 @@ public class InstrumentController extends Controller {
 	
 	@Inject
 	public InstrumentController(InstrumentRepository instrumentRepository) {
+		RepoFactory.putRepo(Constants.INSTRUMENT_REPO, instrumentRepository);
 		this.instrumentRepository = instrumentRepository;
 	}
 	

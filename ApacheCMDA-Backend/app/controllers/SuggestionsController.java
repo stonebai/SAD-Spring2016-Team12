@@ -27,6 +27,8 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import util.Common;
+import util.Constants;
+import util.RepoFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -50,6 +52,9 @@ public class SuggestionsController extends Controller {
     @Inject
     public SuggestionsController(final WorkflowRepository workflowRepository,
                                  UserRepository userRepository, SuggestionsRepository suggestionsRepository) {
+        RepoFactory.putRepo(Constants.WORKFLOW_REPO, workflowRepository);
+        RepoFactory.putRepo(Constants.USER_REPO, userRepository);
+        RepoFactory.putRepo(Constants.SUGGESTION_REPO, suggestionsRepository);
         this.workflowRepository = workflowRepository;
         this.userRepository = userRepository;
         this.suggestionsRepository = suggestionsRepository;

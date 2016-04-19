@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
+import util.RepoFactory;
 
 /**
  * The main set of web services.
@@ -60,6 +61,9 @@ public class ClimateServiceController extends Controller {
 	public ClimateServiceController(
 			final ClimateServiceRepository climateServiceRepository,
 			UserRepository userRepository,ServiceEntryRepository serviceEntryRepository) {
+		RepoFactory.putRepo(Constants.CLIMATE_SERVICE_REPO, climateServiceRepository);
+		RepoFactory.putRepo(Constants.USER_REPO, userRepository);
+		RepoFactory.putRepo(Constants.SERVICE_ENTRY_REPO, serviceEntryRepository);
 		this.climateServiceRepository = climateServiceRepository;
 		this.userRepository = userRepository;
         this.serviceEntryRepository = serviceEntryRepository;

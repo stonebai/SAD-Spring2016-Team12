@@ -36,6 +36,8 @@ import models.DatasetRepository;
 import models.Instrument;
 import models.InstrumentRepository;
 import play.mvc.*;
+import util.Constants;
+import util.RepoFactory;
 
 @Named
 @Singleton
@@ -48,7 +50,13 @@ public class DatasetController extends Controller {
 	private final DatasetEntryRepository datasetEntryRepository;
 	
 	@Inject
-	public DatasetController(ClimateServiceRepository climateServiceRepository, InstrumentRepository instrumentRepository, DatasetRepository datasetRepository, DatasetEntryRepository datasetEntryRepository) {
+	public DatasetController(ClimateServiceRepository climateServiceRepository,
+							 InstrumentRepository instrumentRepository, DatasetRepository datasetRepository,
+							 DatasetEntryRepository datasetEntryRepository) {
+		RepoFactory.putRepo(Constants.CLIMATE_SERVICE_REPO, climateServiceRepository);
+		RepoFactory.putRepo(Constants.INSTRUMENT_REPO, instrumentRepository);
+		RepoFactory.putRepo(Constants.DATASET_REPO, datasetRepository);
+		RepoFactory.putRepo(Constants.DATASET_ENTRY_REPO, datasetEntryRepository);
 		this.climateServiceRepository = climateServiceRepository;
 		this.instrumentRepository = instrumentRepository;
 		this.datasetRepository = datasetRepository;

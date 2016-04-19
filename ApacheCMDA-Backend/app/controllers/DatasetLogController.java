@@ -29,6 +29,8 @@ import models.DatasetLog;
 import models.DatasetLogRepository;
 import models.DatasetRepository;
 import play.mvc.*;
+import util.Constants;
+import util.RepoFactory;
 
 @Named
 @Singleton
@@ -40,6 +42,8 @@ public class DatasetLogController extends Controller {
 	@Inject
 	public DatasetLogController(DatasetRepository datasetRepository, 
 			DatasetLogRepository datasetLogRepository) {
+		RepoFactory.putRepo(Constants.DATASET_REPO, datasetRepository);
+		RepoFactory.putRepo(Constants.DATASET_LOG_REPO, datasetLogRepository);
 		this.datasetLogRepository = datasetLogRepository;
 		this.datasetRepository = datasetRepository;
 	}

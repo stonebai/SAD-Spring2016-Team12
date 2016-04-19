@@ -27,6 +27,8 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import util.Common;
+import util.Constants;
+import util.RepoFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -52,6 +54,11 @@ public class WorkflowController extends Controller {
     public WorkflowController(final WorkflowRepository workflowRepository,
                               UserRepository userRepository, GroupUsersRepository groupUsersRepository,
                               CommentRepository commentRepository, TagRepository tagRepository) {
+        RepoFactory.putRepo(Constants.WORKFLOW_REPO, workflowRepository);
+        RepoFactory.putRepo(Constants.USER_REPO, userRepository);
+        RepoFactory.putRepo(Constants.GROUP_USER_REPO, groupUsersRepository);
+        RepoFactory.putRepo(Constants.COMMENT_REPO, commentRepository);
+        RepoFactory.putRepo(Constants.TAG_REPO, tagRepository);
         this.workflowRepository = workflowRepository;
         this.userRepository = userRepository;
         this.groupUsersRepository = groupUsersRepository;

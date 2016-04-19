@@ -7,6 +7,8 @@ import models.*;
 import play.mvc.Controller;
 import play.mvc.Result;
 import util.Common;
+import util.Constants;
+import util.RepoFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,7 +30,10 @@ public class CommentController extends Controller {
 
     @Inject
     public CommentController(final CommentRepository commentRepository,
-                             UserRepository userRepository, ReplyRepository replyRepository){
+                             UserRepository userRepository, ReplyRepository replyRepository) {
+        RepoFactory.putRepo(Constants.COMMENT_REPO, commentRepository);
+        RepoFactory.putRepo(Constants.USER_REPO, userRepository);
+        RepoFactory.putRepo(Constants.REPLY_REPO, replyRepository);
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.replyRepository = replyRepository;

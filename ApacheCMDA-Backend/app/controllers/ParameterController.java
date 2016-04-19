@@ -32,6 +32,8 @@ import models.Parameter;
 import models.ParameterRepository;
 import play.mvc.Controller;
 import play.mvc.Result;
+import util.Constants;
+import util.RepoFactory;
 
 /**
  * The main set of web services.
@@ -46,6 +48,8 @@ public class ParameterController extends Controller {
     @Inject
     public ParameterController(final ParameterRepository parameterRepository,
     		final ClimateServiceRepository climateServiceRepository) {
+		RepoFactory.putRepo(Constants.PARAMETER_REPO, parameterRepository);
+		RepoFactory.putRepo(Constants.CLIMATE_SERVICE_REPO, climateServiceRepository);
         this.parameterRepository = parameterRepository;
         this.climateServiceRepository = climateServiceRepository;
     }

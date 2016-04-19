@@ -27,6 +27,8 @@ import models.UserRepository;
 import play.mvc.Controller;
 import play.mvc.Result;
 import util.Common;
+import util.Constants;
+import util.RepoFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,6 +51,8 @@ public class GroupUsersController extends Controller {
     @Inject
     public GroupUsersController(final GroupUsersRepository groupUsersRepository,
                                 UserRepository userRepository) {
+        RepoFactory.putRepo(Constants.GROUP_USER_REPO, groupUsersRepository);
+        RepoFactory.putRepo(Constants.USER_REPO, userRepository);
         this.groupUsersRepository = groupUsersRepository;
         this.userRepository = userRepository;
     }

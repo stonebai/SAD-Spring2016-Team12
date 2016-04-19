@@ -13,6 +13,8 @@ import models.TagRepository;
 import play.mvc.Controller;
 import play.mvc.Result;
 import util.Common;
+import util.Constants;
+import util.RepoFactory;
 
 @Named
 @Singleton
@@ -22,6 +24,7 @@ public class TagController extends Controller {
 
     @Inject
     public TagController(final TagRepository tagRepository) {
+        RepoFactory.putRepo(Constants.TAG_REPO, tagRepository);
         this.tagRepository = tagRepository;
     }
 
