@@ -364,7 +364,7 @@ public class ClimateServiceController extends Controller {
     public void printNotFound() {
         System.out.println("No climate service found");
     }
-	
+
     public String getResult(String format, Object iterator) {
         Iterable<ClimateService> climateServices = (Iterable<ClimateService>)iterator;
         String result = new String();
