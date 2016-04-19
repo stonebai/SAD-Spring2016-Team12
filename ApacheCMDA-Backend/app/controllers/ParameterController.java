@@ -40,7 +40,7 @@ import util.RepoFactory;
  */
 @Named
 @Singleton
-public class ParameterController extends Controller {
+public class ParameterController extends AbstractAllController {
 	private final ParameterRepository parameterRepository;
     private final ClimateServiceRepository climateServiceRepository;
 	
@@ -231,6 +231,25 @@ public class ParameterController extends Controller {
     	return ok(result);
     }
     
+    @Override
+    public Object getIterator() {
+        return parameterRepository.findAll();
+    }
+
+    @Override
+    public void printNotFound() {
+        System.out.println("Parameter not found");
+    }
+   
+    @Override
+    public String getResult(String format, Object iterator) {
+        Iterable<Parameter> paramters = (Iterable<Parameter>)iterator;
+        String result = new String();
+        result = new Gson().toJson(paramters);
+        return result;
+    }
+
+
     public Result getAllParameters(String format) {
     	
     	String result = new String();

@@ -37,7 +37,7 @@ DELETE        /dataset/deleteDataset/id/:id                                     
 POST		  /dataset/queryDataset																		@controllers.DatasetController.queryDatasets
 
 # Parameter
-GET           /parameter/getAllParameters/json                                                          @controllers.ParameterController.getAllParameters(format: String="json")
+GET           /parameter/getAllParameters/json                                                          @controllers.ParameterController.getAll(format: String="json")
 GET           /parameter/getParameter/service/:id/name/:name/json                                       @controllers.ParameterController.getParameterByName(id:Long, name: String, format: String="json")
 GET           /parameter/getParameter/id/:id/json                                                       @controllers.ParameterController.getParameterById(id: Long, format: String="json")
 POST          /parameter/addParameter                                                                   @controllers.ParameterController.addParameter
