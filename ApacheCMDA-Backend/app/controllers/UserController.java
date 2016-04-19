@@ -194,6 +194,7 @@ public class UserController extends AbstractAllController {
 	
 	@Override
 	public Object getIterator() {
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		return userRepository.findAll();
 	}
 

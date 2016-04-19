@@ -357,17 +357,14 @@ public class ClimateServiceController extends Controller {
 		return ok(result);
 	}
 
-	@Override
     public Object getIterator() {
         return climateServiceRepository.findAll();
     }
 
-    @Override
     public void printNotFound() {
         System.out.println("No climate service found");
     }
-   
-    @Override
+	
     public String getResult(String format, Object iterator) {
         Iterable<ClimateService> climateServices = (Iterable<ClimateService>)iterator;
         String result = new String();
