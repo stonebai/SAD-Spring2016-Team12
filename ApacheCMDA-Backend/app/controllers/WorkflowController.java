@@ -650,12 +650,35 @@ public class WorkflowController extends Controller {
                 return Common.badRequestWrapper("Expecting workflow id");
             }
 
-            List<Comment> comments = commentRepository.findByWorkflowId(workflowId);
-            for (Comment comment: comments) {
+
+            Workflow workflow = workflowRepository.findById(workflowId);
+            Iterator commentsIterator = workflow.getCommentsIterator();
+            List<Comment> comments = new ArrayList<Comment>();
+//            if (commentsIterator.hasNext()) {
+//                Comment comment = (Comment) commentsIterator.next();
+//                Set<User> empty = new HashSet<>();
+//                comment.getUser().setFollowers(empty);
+//                comment.getUser().setFriends(empty);
+//                comments.add(comment);
+//            }
+//          *** ALICE CODE ***
+            System.out.println("*********************");
+            while (commentsIterator.hasNext()) {
+                Comment comment = (Comment) commentsIterator.next();
                 Set<User> empty = new HashSet<>();
                 comment.getUser().setFollowers(empty);
                 comment.getUser().setFriends(empty);
+                comments.add(comment);
             }
+//            System.out.println("*****************");
+
+//            ** OLD CODE ***
+//              List<Comment> comments = commentRepository.findByWorkflowId(workflowId);
+//            for (Comment comment: comments) {
+//                Set<User> empty = new HashSet<>();
+//                comment.getUser().setFollowers(empty);
+//                comment.getUser().setFriends(empty);
+//            }
 
 
             return ok(new GsonBuilder().excludeFieldsWithModifiers(Modifier.PROTECTED).create().toJson(comments));

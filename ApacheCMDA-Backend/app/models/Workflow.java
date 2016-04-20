@@ -19,10 +19,7 @@ package models;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -119,9 +116,45 @@ public class Workflow {
 
 	public void setTags(Set<Tag> tags) {this.tags = tags;}
 
-	public List<Comment> getComments(){ return this.comments; }
+	public List<Comment> getComments(){
+		return this.comments;
+	}
 
 	public void setComments(List<Comment> comments){ this.comments = comments; }
+
+	public Iterator getCommentsIterator() {
+		return new CommentsIterator();
+	}
+
+	private class CommentsIterator implements Iterator {
+		int index;
+
+		@Override
+		public boolean hasNext() {
+
+			if(index < comments.size()){
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public Object next() {
+
+			if(this.hasNext()){
+				return comments.get(index++);
+			}
+			return null;
+		}
+
+		@Override
+		public void remove() {
+			if(index < comments.size()){
+				comments.remove(index);
+			}
+			return;
+		}
+	}
 
 	public String getWfCategory() {
 		return wfCategory;
