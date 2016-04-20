@@ -41,7 +41,7 @@ import util.RepoFactory;
 
 @Named
 @Singleton
-public class DatasetController extends Controller {
+public class DatasetController extends AbstractAllController {
 	public static final String WILDCARD = "%";
 	
 	private final ClimateServiceRepository climateServiceRepository;
@@ -307,6 +307,23 @@ public class DatasetController extends Controller {
     	return ok(result);
     }
 
+    @Override
+    public Object getIterator() {
+        return datasetRepository;
+    }
+
+    @Override
+    public void printNotFound() {
+        System.out.println("Dataset not found");
+    }
+
+    @Override
+    public String getResult(String format, Object iterator) {
+        Iterable<Dataset> datasets = (Iterable<Dataset>)iterator;
+        String result = new String();
+        result = new Gson().toJson(datasets);
+        return result;
+    }    
     
     public Result getAllDatasets(String format) {
     	try {

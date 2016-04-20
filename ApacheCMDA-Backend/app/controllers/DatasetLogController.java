@@ -34,7 +34,7 @@ import util.RepoFactory;
 
 @Named
 @Singleton
-public class DatasetLogController extends Controller {
+public class DatasetLogController extends AbstractAllController {
 	
 	private final DatasetLogRepository datasetLogRepository;
 	private final DatasetRepository datasetRepository;
@@ -139,6 +139,24 @@ public class DatasetLogController extends Controller {
     	}
     	
     	return ok(result);
+    }
+
+    @Override
+    public Object getIterator() {
+        return datasetLogRepository.findAll();
+    }
+
+    @Override
+    public void printNotFound() {
+        System.out.println("DatasetLog not found");
+    }
+
+    @Override
+    public String getResult(String format, Object iterator) {
+        Iterable<DatasetLog> datasetLogs = (Iterable<DatasetLog>)iterator;
+        String result = new String();
+        result = new Gson().toJson(datasetLogs);
+        return result;
     }
 
     public Result getAllDatasetLogs(String format) {

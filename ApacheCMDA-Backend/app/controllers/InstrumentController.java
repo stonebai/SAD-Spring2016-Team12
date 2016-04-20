@@ -34,7 +34,7 @@ import util.RepoFactory;
 
 @Named
 @Singleton
-public class InstrumentController extends Controller {
+public class InstrumentController extends AbstractAllController {
 	
 	private final InstrumentRepository instrumentRepository;
 	
@@ -134,6 +134,23 @@ public class InstrumentController extends Controller {
     	return ok(result);
     }
 
+    @Override
+    public Object getIterator() {
+        return instrumentRepository.findAll();
+    }
+
+    @Override
+    public void printNotFound() {
+        System.out.println("Instrument not found");
+    }
+   
+    @Override
+    public String getResult(String format, Object iterator) {
+        Iterable<Instrument> instruments = (Iterable<Instrument>)iterator;
+        String result = new String();
+        result = new Gson().toJson(instruments);
+        return result;
+    }
     
     public Result getAllInstruments(String format) {
     	try {

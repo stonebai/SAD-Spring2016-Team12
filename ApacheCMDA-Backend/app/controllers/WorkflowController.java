@@ -43,13 +43,6 @@ import java.util.*;
 @Singleton
 public class WorkflowController extends Controller {
 
-
-    private final WorkflowRepository workflowRepository;
-    private final UserRepository userRepository;
-    private final GroupUsersRepository groupUsersRepository;
-    private final CommentRepository commentRepository;
-    private final TagRepository tagRepository;
-
     @Inject
     public WorkflowController(final WorkflowRepository workflowRepository,
                               UserRepository userRepository, GroupUsersRepository groupUsersRepository,
@@ -59,14 +52,12 @@ public class WorkflowController extends Controller {
         RepoFactory.putRepo(Constants.GROUP_USER_REPO, groupUsersRepository);
         RepoFactory.putRepo(Constants.COMMENT_REPO, commentRepository);
         RepoFactory.putRepo(Constants.TAG_REPO, tagRepository);
-        this.workflowRepository = workflowRepository;
-        this.userRepository = userRepository;
-        this.groupUsersRepository = groupUsersRepository;
-        this.commentRepository = commentRepository;
-        this.tagRepository = tagRepository;
     }
 
     public Result post() {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
+        UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
+        TagRepository tagRepository = (TagRepository) RepoFactory.getRepo(Constants.TAG_REPO);
         JsonNode json = request().body().asJson();
         if (json == null) {
             System.out.println("Workflow not created, expecting Json data");
@@ -141,6 +132,10 @@ public class WorkflowController extends Controller {
 
     //edit workflow
     public Result updateWorkflow() {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
+        UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
+        GroupUsersRepository groupUsersRepository =
+                (GroupUsersRepository) RepoFactory.getRepo(Constants.GROUP_USER_REPO);
         JsonNode json = request().body().asJson();
         if (json == null) {
             System.out.println("Workflow not updated, expecting Json data");
@@ -198,6 +193,9 @@ public class WorkflowController extends Controller {
 
     //delete workflow
     public Result deleteWorkflow() {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
+        GroupUsersRepository groupUsersRepository =
+                (GroupUsersRepository) RepoFactory.getRepo(Constants.GROUP_USER_REPO);
         JsonNode json = request().body().asJson();
         if (json == null) {
             System.out.println("Workflow not created, expecting Json data");
@@ -225,6 +223,7 @@ public class WorkflowController extends Controller {
     }
 
     public Result uploadImage(Long id) {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
         Http.MultipartFormData body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart image = body.getFile("image");
 
@@ -252,6 +251,9 @@ public class WorkflowController extends Controller {
     }
     //get detailed workflow.
     public Result get(Long wfID, Long userID, String format) {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
+        GroupUsersRepository groupUsersRepository =
+                (GroupUsersRepository) RepoFactory.getRepo(Constants.GROUP_USER_REPO);
         if (wfID == null) {
             System.out.println("Workflow id is null or empty!");
             return Common.badRequestWrapper("Workflow id is null or empty!");
@@ -315,6 +317,7 @@ public class WorkflowController extends Controller {
 
     //get user's own workflow list.
     public Result getWorkflowList(Long userID, String format) {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
         if (userID == null) {
             System.out.println("user id is null or empty!");
             return Common.badRequestWrapper("user id is null or empty!");
@@ -335,6 +338,7 @@ public class WorkflowController extends Controller {
 
     //get public workflow list.
     public Result getPublicWorkflow(String format) {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
 
         List<Workflow> workflowList = workflowRepository.findPubicWorkflow();
         for(Workflow workflow: workflowList) {
@@ -355,6 +359,10 @@ public class WorkflowController extends Controller {
 
 
     public Result getTimeLine(Long id, Long offset, String format) {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
+        UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
+        GroupUsersRepository groupUsersRepository =
+                (GroupUsersRepository) RepoFactory.getRepo(Constants.GROUP_USER_REPO);
         if(id == null) {
             System.out.println("Id not created, please enter valid user");
             return Common.badRequestWrapper("Id not created, please enter valid user");
@@ -441,6 +449,9 @@ public class WorkflowController extends Controller {
 
 
     public Result addComment(){
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
+        UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
+        CommentRepository commentRepository = (CommentRepository) RepoFactory.getRepo(Constants.COMMENT_REPO);
         try{
             JsonNode json = request().body().asJson();
             if(json==null){
@@ -479,6 +490,8 @@ public class WorkflowController extends Controller {
     }
     
     public Result setTag() {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
+        TagRepository tagRepository = (TagRepository) RepoFactory.getRepo(Constants.TAG_REPO);
         try{
             JsonNode json = request().body().asJson();
             if(json==null){
@@ -524,6 +537,8 @@ public class WorkflowController extends Controller {
     }
 
     public Result deleteTag( Long workflowId, String tagString) {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
+        TagRepository tagRepository = (TagRepository) RepoFactory.getRepo(Constants.TAG_REPO);
         try{
             Workflow workflow = workflowRepository.findOne(workflowId);
             if(workflow==null){
@@ -553,6 +568,7 @@ public class WorkflowController extends Controller {
     }
 
     public Result getTags(Long workflowId) {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
         try {
             Workflow workflow = workflowRepository.findOne(workflowId);
             if(workflow==null){
@@ -584,6 +600,8 @@ public class WorkflowController extends Controller {
     }
 
     public Result getByTag(String tagString) {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
+        TagRepository tagRepository = (TagRepository) RepoFactory.getRepo(Constants.TAG_REPO);
         try {
             if(tagString==null || tagString.equals("")) {
                 System.out.println("tag is null or empty!");
@@ -615,6 +633,7 @@ public class WorkflowController extends Controller {
     }
     
     public Result getByTitle(String title) {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
         try {
             if(title==null || title.equals("")) {
                 System.out.println("title is null or empty!");
@@ -638,12 +657,14 @@ public class WorkflowController extends Controller {
     }
 
     public Result getTop3WorkFlow() {
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
         List<Workflow> topWorkflow = workflowRepository.findTop3Workflow();
         String result = new GsonBuilder().excludeFieldsWithModifiers(Modifier.PROTECTED).create().toJson(topWorkflow);
         return  ok(result);
     }
 
     public Result getComments(Long workflowId) {
+        CommentRepository commentRepository = (CommentRepository) RepoFactory.getRepo(Constants.COMMENT_REPO);
         try{
             if(workflowId==null){
                 System.out.println("Expecting workflow id");
