@@ -28,6 +28,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import util.Common;
 import util.Constants;
+import util.PipeAndFilterCheck;
 import util.RepoFactory;
 
 import javax.inject.Inject;
@@ -59,30 +60,35 @@ public class WorkflowController extends Controller {
         UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
         TagRepository tagRepository = (TagRepository) RepoFactory.getRepo(Constants.TAG_REPO);
         JsonNode json = request().body().asJson();
-        if (json == null) {
+
+        if (!PipeAndFilterCheck.checkRequestBody(json)) {
             System.out.println("Workflow not created, expecting Json data");
             return Common.badRequestWrapper("Workflow not created, expecting Json data");
         }
-
-//        long userID = json.path("userID").asLong();
-//        String wfTitle = json.path("wfTitle").asText();
-//        String wfCategory = json.path("wfCategory").asText();
-//        String wfCode = json.path("wfCode").asText();
-//        String wfDesc = json.path("wfDesc").asText();
-//        String wfImg = json.path("wfImg").asText();
-//        String wfVisibility = json.path("wfVisibility").asText();
-//        String wfTags = json.path("wfTags").asText();
-//        long wfGroupId = json.path("wfGroupId").asLong();
-//        String wfUrl = json.path("wfUrl").asText();
-//        String wfInput = json.path("wfInput").asText();
-//        String wfOutput = json.path("wfOutput").asText();
+        if (!PipeAndFilterCheck.checkUserIdInJson(json)) {
+            System.out.println("Workflow not created, expecting user id in request body");
+            return Common.badRequestWrapper("Workflow not created, expecting user id in request body");
+        }
+        if (!PipeAndFilterCheck.checkUserIdInJsonValid(json)) {
+            System.out.println("Given user id does not exist");
+            return Common.badRequestWrapper("User doesn't exist");
+        }
+        if (!PipeAndFilterCheck.checkWfTagsInJson(json)) {
+            System.out.println("Workflow not created, expecting workflow tags in request body");
+            return Common.badRequestWrapper("Workflow not created, expecting workflow tags in request body");
+        }
+        if (!PipeAndFilterCheck.checkWfContributorsInJson(json)) {
+            System.out.println("Workflow not created, expecting workflow contributors in request body");
+            return Common.badRequestWrapper("Workflow not created, expecting workflow contributors in request body");
+        }
+        if (!PipeAndFilterCheck.checkWfRelatedInJson(json)) {
+            System.out.println("Workflow not created, expecting workflow related in request body");
+            return Common.badRequestWrapper("Workflow not created, expecting workflow related in request body");
+        }
 
         long userID = json.path("userID").asLong();
         String wfTags = json.path("wfTags").asText();
         User user = userRepository.findOne(userID);
-        if(user == null) {
-            return Common.badRequestWrapper("User doesn't exist!");
-        }
 
         JsonNode contributorsID = json.path("wfContributors");
         List<User> wfContributors = new ArrayList<User>();
@@ -133,22 +139,34 @@ public class WorkflowController extends Controller {
     //edit workflow
     public Result updateWorkflow() {
         WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
-        UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
         GroupUsersRepository groupUsersRepository =
                 (GroupUsersRepository) RepoFactory.getRepo(Constants.GROUP_USER_REPO);
         JsonNode json = request().body().asJson();
-        if (json == null) {
+
+        if (!PipeAndFilterCheck.checkRequestBody(json)) {
             System.out.println("Workflow not updated, expecting Json data");
             return Common.badRequestWrapper("Workflow not updated, expecting Json data");
+        }
+        if (!PipeAndFilterCheck.checkWfIdInJson(json)) {
+            System.out.println("Workflow not created, expecting workflow id in request body");
+            return Common.badRequestWrapper("Workflow not created, expecting workflow id in request body");
+        }
+        if (!PipeAndFilterCheck.checkWfIdInJsonValid(json)) {
+            System.out.println("Given workflow id does not exist");
+            return Common.badRequestWrapper("Workflow doesn't exist");
+        }
+        if (!PipeAndFilterCheck.checkUserIdInJson(json)) {
+            System.out.println("Workflow not created, expecting user id in request body");
+            return Common.badRequestWrapper("Workflow not created, expecting user id in request body");
+        }
+        if (!PipeAndFilterCheck.checkUserIdInJsonValid(json)) {
+            System.out.println("Given user id does not exist");
+            return Common.badRequestWrapper("User doesn't exist");
         }
 
         long wfID = json.path("wfID").asLong();
         long userID = json.path("userID").asLong();
         Workflow workflow = workflowRepository.findOne(wfID);
-        User user = userRepository.findOne(userID);
-        if (workflow == null) {
-            return Common.badRequestWrapper("Workflow doesn't exist.");
-        }
 
         System.out.println("wfID is " + wfID);
         System.out.println("userID is " + userID);
@@ -197,17 +215,31 @@ public class WorkflowController extends Controller {
         GroupUsersRepository groupUsersRepository =
                 (GroupUsersRepository) RepoFactory.getRepo(Constants.GROUP_USER_REPO);
         JsonNode json = request().body().asJson();
-        if (json == null) {
+
+        if (!PipeAndFilterCheck.checkRequestBody(json)) {
             System.out.println("Workflow not created, expecting Json data");
             return Common.badRequestWrapper("Workflow not created, expecting Json data");
+        }
+        if (!PipeAndFilterCheck.checkWfIdInJson(json)) {
+            System.out.println("Workflow not created, expecting workflow id in request body");
+            return Common.badRequestWrapper("Workflow not created, expecting workflow id in request body");
+        }
+        if (!PipeAndFilterCheck.checkWfIdInJsonValid(json)) {
+            System.out.println("Given workflow id does not exist");
+            return Common.badRequestWrapper("Workflow doesn't exist");
+        }
+        if (!PipeAndFilterCheck.checkUserIdInJson(json)) {
+            System.out.println("Workflow not created, expecting user id in request body");
+            return Common.badRequestWrapper("User not created, expecting workflow id in request body");
+        }
+        if (!PipeAndFilterCheck.checkUserIdInJsonValid(json)) {
+            System.out.println("Given user id does not exist");
+            return Common.badRequestWrapper("User doesn't exist");
         }
 
         long wfID = json.path("wfID").asLong();
         long userID = json.path("userID").asLong();
         Workflow workflow = workflowRepository.findOne(wfID);
-        if(workflow == null) {
-            return Common.badRequestWrapper("Workflow doesn't exist!");
-        }
 
         List<GroupUsers> groups = groupUsersRepository.findByCreatorUser(userID);
         List<Integer> groupList = new ArrayList<>();
@@ -249,14 +281,28 @@ public class WorkflowController extends Controller {
             // return redirect(routes.Application.index());
         }
     }
+
     //get detailed workflow.
     public Result get(Long wfID, Long userID, String format) {
         WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
         GroupUsersRepository groupUsersRepository =
                 (GroupUsersRepository) RepoFactory.getRepo(Constants.GROUP_USER_REPO);
-        if (wfID == null) {
+
+        if (!PipeAndFilterCheck.checkId(wfID)) {
             System.out.println("Workflow id is null or empty!");
             return Common.badRequestWrapper("Workflow id is null or empty!");
+        }
+        if (!PipeAndFilterCheck.checkId(userID)) {
+            System.out.println("User id is null or empty!");
+            return Common.badRequestWrapper("User id is null or empty!");
+        }
+        if (!PipeAndFilterCheck.checkValidWfId(wfID)) {
+            System.out.println("Workflow does not exists");
+            return Common.badRequestWrapper("Workflow does not exists");
+        }
+        if (!PipeAndFilterCheck.checkValidUserId(userID)) {
+            System.out.println("User does not exists");
+            return Common.badRequestWrapper("User does not exists");
         }
 
         Workflow workflow = workflowRepository.findOne(wfID);
@@ -264,26 +310,20 @@ public class WorkflowController extends Controller {
         workflow.getUser().setFollowers(empty);
         workflow.getUser().setFriends(empty);
 
-        if (workflow == null) {
-            System.out.println("The workflow does not exist!");
-            return Common.badRequestWrapper("The workflow does not exist!");
+        if (workflow.getStatus().equals("deleted")) {
+            return Common.badRequestWrapper("This workflow has been deleted");
         }
-        else {
-            if (workflow.getStatus().equals("deleted")) {
-                return Common.badRequestWrapper("This workflow has been deleted");
+        else if((int) workflow.getGroupId() != 0 && (int)workflow.getUserID() != userID.intValue()) {
+            List<GroupUsers> groupList = groupUsersRepository.findByUserId(userID);
+            List<Integer> groupListParse = new ArrayList<>();
+            for (GroupUsers g: groupList) {
+                groupListParse.add((int)g.getId());
             }
-            else if((int) workflow.getGroupId() != 0 && (int)workflow.getUserID() != userID.intValue()) {
-                List<GroupUsers> groupList = groupUsersRepository.findByUserId(userID);
-                List<Integer> groupListParse = new ArrayList<>();
-                for (GroupUsers g: groupList) {
-                    groupListParse.add((int)g.getId());
-                }
-                if(!groupListParse.contains((int) workflow.getGroupId())) {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("error", "No Access!");
-                    String error = new Gson().toJson(map);
-                    return ok(error);
-                }
+            if(!groupListParse.contains((int) workflow.getGroupId())) {
+                Map<String, String> map = new HashMap<>();
+                map.put("error", "No Access!");
+                String error = new Gson().toJson(map);
+                return ok(error);
             }
         }
 
@@ -318,9 +358,14 @@ public class WorkflowController extends Controller {
     //get user's own workflow list.
     public Result getWorkflowList(Long userID, String format) {
         WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
-        if (userID == null) {
+
+        if (!PipeAndFilterCheck.checkId(userID)) {
             System.out.println("user id is null or empty!");
             return Common.badRequestWrapper("user id is null or empty!");
+        }
+        if (!PipeAndFilterCheck.checkValidUserId(userID)) {
+            System.out.println("User does not exists");
+            return Common.badRequestWrapper("User does not exists");
         }
 
         List<Workflow> workflowList = workflowRepository.findByUserID(userID);
@@ -454,9 +499,26 @@ public class WorkflowController extends Controller {
         CommentRepository commentRepository = (CommentRepository) RepoFactory.getRepo(Constants.COMMENT_REPO);
         try{
             JsonNode json = request().body().asJson();
-            if(json==null){
+
+            if (!PipeAndFilterCheck.checkRequestBody(json)) {
                 System.out.println("Comment not created, expecting Json data");
                 return Common.badRequestWrapper("Comment not created, expecting Json data");
+            }
+            if (!PipeAndFilterCheck.checkUserIdInJson(json)) {
+                System.out.println("Comment not created, expecting user id in Json data");
+                return Common.badRequestWrapper("Comment not created, expecting user id in Json data");
+            }
+            if (!PipeAndFilterCheck.checkWfIdInJson(json)) {
+                System.out.println("Comment not created, expecting workflow id in Json data");
+                return Common.badRequestWrapper("Comment not created, expecting workflow id in Json data");
+            }
+            if (!PipeAndFilterCheck.checkUserIdInJsonValid(json)) {
+                System.out.println("Comment not created, specified user does not exist");
+                return Common.badRequestWrapper("Comment not created, specified user does not exist");
+            }
+            if (!PipeAndFilterCheck.checkWfIdInJsonValid(json)) {
+                System.out.println("Comment not created, specified workflow does not exist");
+                return Common.badRequestWrapper("Comment not created, specified workflow does not exist");
             }
 
             long userId = json.path("userID").asLong();
@@ -466,10 +528,6 @@ public class WorkflowController extends Controller {
             String commentImage = json.path("commentImg").asText();
 
             User user = userRepository.findOne(userId);
-            if(user==null){
-                System.out.println("Cannot find user with given user id");
-                return Common.badRequestWrapper("Cannot find user with given user id");
-            }
             Workflow workflow = workflowRepository.findOne(workflowId);
             if(workflow==null){
                 System.out.println("Cannot find workflow with given workflow id");
@@ -664,14 +722,18 @@ public class WorkflowController extends Controller {
     }
 
     public Result getComments(Long workflowId) {
-        CommentRepository commentRepository = (CommentRepository) RepoFactory.getRepo(Constants.COMMENT_REPO);
-        try{
-            if(workflowId==null){
-                System.out.println("Expecting workflow id");
-                return Common.badRequestWrapper("Expecting workflow id");
-            }
+        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
 
+        if (!PipeAndFilterCheck.checkId(workflowId)) {
+            System.out.println("Expecting workflow id");
+            return Common.badRequestWrapper("Expecting workflow id");
+        }
+        if (!PipeAndFilterCheck.checkValidWfId(workflowId)) {
+            System.out.println("The specified workflow does not exist");
+            return Common.badRequestWrapper("The specified workflow does not exist");
+        }
 
+        try {
             Workflow workflow = workflowRepository.findById(workflowId);
             Iterator commentsIterator = workflow.getCommentsIterator();
             List<Comment> comments = new ArrayList<Comment>();
