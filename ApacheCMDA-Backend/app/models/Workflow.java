@@ -112,14 +112,6 @@ public class Workflow {
 		wfDate = new Date();
 	}
 
-	public Workflow(WorkflowBuilder workflowBuilder) {
-		this.wfContributors = workflowBuilder.wfContributors;
-		this.wfRelated = workflowBuilder.wfRelated;
-		this.userName = workflowBuilder.userName;
-		this.status = workflowBuilder.status;
-		this.user = workflowBuilder.user;
-	}
-
 
 	public Set<Tag> getTags() {return this.tags;}
 
