@@ -30,6 +30,7 @@ import util.Common;
 import util.Constants;
 import util.PipeAndFilterCheck;
 import util.RepoFactory;
+import util.Top3;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -353,7 +354,7 @@ public class WorkflowController extends Controller {
                 top3.refreshTop3();
             }
         }
-        
+
         workflowRepository.save(workflow);
         List<GroupUsers> adminGroup = groupUsersRepository.findByCreatorUser(userID);
         List<Integer> adminGroupList = new ArrayList<>();
