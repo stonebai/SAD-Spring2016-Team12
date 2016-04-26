@@ -356,7 +356,7 @@ public class ClimateServiceController extends AbstractAllController {
 
 		return ok(result);
 	}
-	
+
     public Object getIterator() {
         return climateServiceRepository.findAll();
     }
