@@ -107,7 +107,7 @@ public class WorkflowController extends Controller {
         workflow.setWfContributors(wfContributors);
         workflow.setWfRelated(wfRelated);
         workflow.setUserName(user.getUserName());
-        workflow.setStatus("norm");
+        workflow.setState(new NormalState());
         workflow.setUser(user);
         Workflow savedWorkflow = workflowRepository.save(workflow);
         Workflow newWorkflow = workflowRepository.findById(savedWorkflow.getId());
@@ -198,7 +198,15 @@ public class WorkflowController extends Controller {
         if (json.get("wfUrl")!=null)  workflow.setWfUrl(json.get("wfUrl").asText());
         if (json.get("wfInput")!=null) workflow.setWfInput(json.get("wfInput").asText());
         if (json.get("wfOutput")!=null) workflow.setWfOutput(json.get("wfOutput").asText());
-        if (json.get("wfStatus")!=null) workflow.setStatus(json.get("wfStatus").asText());
+        if (json.get("wfStatus")!=null) {
+            String status = json.get("wfStatus").asText();
+            if (status.equals("norm")) {
+                workflow.setState(new NormalState());
+            }
+            else if (status.equals("deleted")) {
+                workflow.setState(new DeletedState());
+            }
+        }
         Date cur = new Date();
         workflow.setWfDate(cur);
 
@@ -249,7 +257,7 @@ public class WorkflowController extends Controller {
         if(!groupList.contains((int)workflow.getGroupId()) && (int)userID != (int)workflow.getUserID()) {
             return Common.badRequestWrapper("No access!");
         }
-        workflow.setStatus("deleted");
+        workflow.setState(new DeletedState());
         workflowRepository.save(workflow);
         return ok("{\"success\":\"Success!\"}");
     }

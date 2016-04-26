@@ -45,6 +45,7 @@ public class Workflow {
 	private String wfInput;
 	private String wfOutput;
 	private Date wfDate;
+	private WorkflowState state;
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CommentId", referencedColumnName = "id")
@@ -220,12 +221,16 @@ public class Workflow {
 		this.wfRelated = wfRelated;
 	}
 
-	public String getStatus() {
-		return status;
+	public void setState(WorkflowState state) {
+		this.state = state;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public WorkflowState getState() {
+		return state;
+	}
+
+	public String getStatus() {
+		return state.getStatus();
 	}
 
 	public long getUserID() {
