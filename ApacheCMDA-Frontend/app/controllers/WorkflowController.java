@@ -186,8 +186,8 @@ public class WorkflowController extends Controller {
             Suggestion cur = new Suggestion(n);
             suggestionList.add(cur);
         }
-
-        return ok(workflowdetail.render(wf, commentRes, replyRes,  suggestionList, session("username"), Long.parseLong(session("id"))));
+        HTMLAdapter htmlAdapter = new HTMLAdapter();
+        return ok(workflowdetail.render(wf, commentRes, replyRes,  suggestionList, session("username"), Long.parseLong(session("id")), htmlAdapter));
     }
 
     public static Result edit(Long wid)
