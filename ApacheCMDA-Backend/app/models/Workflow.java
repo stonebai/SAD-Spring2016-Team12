@@ -111,6 +111,14 @@ public class Workflow {
 		wfDate = new Date();
 	}
 
+	public Workflow(WorkflowBuilder workflowBuilder) {
+		this.wfContributors = workflowBuilder.wfContributors;
+		this.wfRelated = workflowBuilder.wfRelated;
+		this.userName = workflowBuilder.userName;
+		this.status = workflowBuilder.status;
+		this.user = workflowBuilder.user;
+	}
+
 
 	public Set<Tag> getTags() {return this.tags;}
 
@@ -315,22 +323,27 @@ public class Workflow {
 
         public WorkflowBuilder wfContributors(List<User> wfContributors) {
         	this.wfContributors = wfContributors;
+			return this;
         }
 
         public WorkflowBuilder wfRelated(List<Workflow> wfRelated) {
         	this.wfRelated = wfRelated;
+			return this;
         }
 
         public WorkflowBuilder userName(String userName) {
         	this.userName = userName;
+			return this;
         }
 
         public WorkflowBuilder status(String status) {
         	this.status = status;
+			return this;
         }
 
         public WorkflowBuilder user(User user) {
         	this.user = user;
+			return this;
         }
 
         public Workflow build() {

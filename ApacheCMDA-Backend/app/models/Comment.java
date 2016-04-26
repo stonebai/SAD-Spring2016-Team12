@@ -41,6 +41,13 @@ public class Comment {
         this.thumb = 0;
     }
 
+    public Comment(CommentBuilder commentBuilder) {
+        this.user = commentBuilder.user;
+        this.timestamp = commentBuilder.timestamp;
+        this.content = commentBuilder.content;
+        this.commentImage = commentBuilder.commentImage;
+    }
+
     public void setThumb(int thumb) {
         this.thumb = thumb;
     }
@@ -109,14 +116,17 @@ public class Comment {
 
         public CommentBuilder timestamp(long timestamp) {
             this.timestamp = timestamp;
+            return this;
         }
 
         public CommentBuilder content(String content) {
             this.content = content;
+            return this;
         }
 
         public CommentBuilder commentImage(String commentImage) {
             this.commentImage = commentImage;
+            return this;
         }
  
         public Comment build() {
