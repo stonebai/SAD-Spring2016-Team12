@@ -104,4 +104,31 @@ public class PipeAndFilterCheck {
             return true;
         }
     }
+
+    public static boolean checkUsernameInJson(JsonNode json) {
+        if (json.path("username") == null) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public static boolean checkEmailInJson(JsonNode json) {
+        if (json.path("email") == null) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public static boolean checkPasswordInJson(JsonNode json) {
+        if (json.path("password") == null) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 }

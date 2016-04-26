@@ -22,10 +22,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import models.User;
 import models.UserRepository;
-import play.mvc.Controller;
 import play.mvc.Result;
 import util.Common;
 import util.Constants;
+import util.PipeAndFilterCheck;
 import util.RepoFactory;
 
 import javax.inject.Inject;
@@ -54,9 +54,22 @@ public class UserController extends AbstractAllController {
 	public Result userRegister() {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		JsonNode json = request().body().asJson();
-		if (json == null) {
+
+		if (!PipeAndFilterCheck.checkRequestBody(json)) {
 			System.out.println("User not created, expecting Json data");
 			return Common.badRequestWrapper("User not created, expecting Json data");
+		}
+		if (!PipeAndFilterCheck.checkUsernameInJson(json)) {
+			System.out.println("User not created, expecting user name in Json data");
+			return Common.badRequestWrapper("User not created, expecting user name in Json data");
+		}
+		if (!PipeAndFilterCheck.checkEmailInJson(json)) {
+			System.out.println("User not created, expecting email in Json data");
+			return Common.badRequestWrapper("User not created, expecting email in Json data");
+		}
+		if (!PipeAndFilterCheck.checkPasswordInJson(json)) {
+			System.out.println("User not created, expecting password in Json data");
+			return Common.badRequestWrapper("User not created, expecting password in Json data");
 		}
 
 		// Parse JSON file
@@ -85,10 +98,20 @@ public class UserController extends AbstractAllController {
 	public Result userLogin() {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		JsonNode json = request().body().asJson();
-		if (json == null) {
+
+		if (!PipeAndFilterCheck.checkRequestBody(json)) {
 			System.out.println("Cannot check user, expecting Json data");
 			return Common.badRequestWrapper("Cannot check user, expecting Json data");
 		}
+		if (!PipeAndFilterCheck.checkEmailInJson(json)) {
+			System.out.println("Cannot check user, expecting email in Json data");
+			return Common.badRequestWrapper("Cannot check user, expecting email in Json data");
+		}
+		if (!PipeAndFilterCheck.checkPasswordInJson(json)) {
+			System.out.println("Cannot check user, expecting password in Json data");
+			return Common.badRequestWrapper("Cannot check user, expecting password in Json data");
+		}
+
 		String email = json.path("email").asText();
 		String password = json.path("password").asText();
 		User user = userRepository.findByEmail(email);
@@ -127,12 +150,18 @@ public class UserController extends AbstractAllController {
 	}
 
 	public Result deleteUser(Long id) {
-		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
-		User deleteUser = userRepository.findOne(id);
-		if (deleteUser == null) {
+
+		if (!PipeAndFilterCheck.checkId(id)) {
+			System.out.println("User id cannot be empty or null");
+			return Common.badRequestWrapper("User id cannot be empty or null");
+		}
+		if (!PipeAndFilterCheck.checkValidUserId(id)) {
 			System.out.println("User not found with id: " + id);
 			return notFound("User not found with id: " + id);
 		}
+
+		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
+		User deleteUser = userRepository.findOne(id);
 
 		userRepository.delete(deleteUser);
 		System.out.println("User is deleted: " + id);
@@ -142,9 +171,14 @@ public class UserController extends AbstractAllController {
 	public Result setProfile(long id) {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		JsonNode json = request().body().asJson();
-		if (json == null) {
+
+		if (!PipeAndFilterCheck.checkRequestBody(json)) {
 			System.out.println("User not saved, expecting Json data");
 			return Common.badRequestWrapper("User not saved, expecting Json data");
+		}
+		if (!PipeAndFilterCheck.checkEmailInJson(json)) {
+			System.out.println("User not saved, expecting email in Json data");
+			return Common.badRequestWrapper("User not saved, expecting email in Json data");
 		}
 
 		// Parse JSON file
@@ -168,17 +202,18 @@ public class UserController extends AbstractAllController {
 
 	public Result getProfile(Long id, String format) {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
-		if (id == null) {
+
+		if (!PipeAndFilterCheck.checkId(id)) {
 			System.out.println("User id is null or empty!");
 			return Common.badRequestWrapper("User id is null or empty!");
+		}
+		if (!PipeAndFilterCheck.checkValidUserId(id)) {
+			System.out.println("User not found with with id: " + id);
+			return notFound("User not found with with id: " + id);
 		}
 
 		User user = userRepository.findOne(id);
 
-		if (user == null) {
-			System.out.println("User not found with with id: " + id);
-			return notFound("User not found with with id: " + id);
-		}
 		String result = new String();
 		if (format.equals("json")) {
 			JsonObject jsonObject = new JsonObject();
@@ -287,24 +322,24 @@ public class UserController extends AbstractAllController {
 	public Result userFollow(Long userId, Long followeeId){
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try{
-			if(userId==null){
+			if (!PipeAndFilterCheck.checkId(userId)) {
 				System.out.println("Follower id is null or empty!");
 				return badResponse("Follower id is null or empty!");
 			}
-			User user = userRepository.findOne(userId);
-            if(user==null){
-                return badResponse("Follower is not existed");
-            }
-
-
-			if(followeeId==null){
+			if (!PipeAndFilterCheck.checkValidUserId(userId)) {
+				System.out.println("Follower is not existed");
+				return badResponse("Follower is not existed");
+			}
+			if (!PipeAndFilterCheck.checkId(followeeId)) {
 				System.out.println("Followee id is null or empty!");
 				return badResponse("Followee id is null or empty!");
 			}
+			if (!PipeAndFilterCheck.checkValidUserId(followeeId)) {
+				System.out.println("Followee is not existed");
+				return badResponse("Followee is not existed");
+			}
+			User user = userRepository.findOne(userId);
 			User followee = userRepository.findOne(followeeId);
-            if(followee==null){
-                return badResponse("Followee is not existed");
-            }
 
             Set<User> followers = followee.getFollowers();
             followers.add(user);
@@ -321,22 +356,25 @@ public class UserController extends AbstractAllController {
     public Result userUnfollow(Long userId, Long followeeId){
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
         try{
-            if(userId==null){
-                System.out.println("Follower id is null or empty!");
-                return badResponse("Follower id is null or empty!");
-            }
+			if (!PipeAndFilterCheck.checkId(userId)) {
+				System.out.println("Follower id is null or empty!");
+				return badResponse("Follower id is null or empty!");
+			}
+			if (!PipeAndFilterCheck.checkValidUserId(userId)) {
+				System.out.println("Follower is not existed");
+				return badResponse("Follower is not existed");
+			}
+			if (!PipeAndFilterCheck.checkId(followeeId)) {
+				System.out.println("Followee id is null or empty!");
+				return badResponse("Followee id is null or empty!");
+			}
+			if (!PipeAndFilterCheck.checkValidUserId(followeeId)) {
+				System.out.println("Followee is not existed");
+				return badResponse("Followee is not existed");
+			}
+
             User user = userRepository.findOne(userId);
-            if(user==null){
-                return badResponse("Follower is not existed");
-            }
-            if(followeeId==null){
-                System.out.println("Followee id is null or empty!");
-                return badResponse("Followee id is null or empty!");
-            }
             User followee = userRepository.findOne(followeeId);
-            if(followee==null){
-                return badResponse("Followee is not existed");
-            }
 
 			Set<User> followers = followee.getFollowers();
 			for(User u : followers) {
@@ -357,15 +395,16 @@ public class UserController extends AbstractAllController {
 	public Result getFollowers(Long id){
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try{
-			if(id==null){
+			if (!PipeAndFilterCheck.checkId(id)) {
 				System.out.println("User id is null or empty!");
 				return badResponse("User id is null or empty");
 			}
-			User user = userRepository.findOne(id);
-			if(user==null){
+			if (!PipeAndFilterCheck.checkValidUserId(id)) {
 				System.out.println("Cannot find user");
 				return badResponse("Cannot find user");
 			}
+
+			User user = userRepository.findOne(id);
 			Set<User> followers = user.getFollowers();
 			StringBuilder sb = new StringBuilder();
 			sb.append("{\"followers\":");
@@ -392,15 +431,15 @@ public class UserController extends AbstractAllController {
 	public Result getFollowees(Long id){
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try{
-			if(id==null){
+			if (!PipeAndFilterCheck.checkId(id)) {
 				System.out.println("User id is null or empty!");
 				return badResponse("User id is null or empty");
 			}
-			User user = userRepository.findOne(id);
-			if(user==null){
+			if (!PipeAndFilterCheck.checkValidUserId(id)) {
 				System.out.println("Cannot find user");
 				return badResponse("Cannot find user");
 			}
+
 			Set<User> followees = userRepository.findByFollowerId(id);
 			StringBuilder sb = new StringBuilder();
 
@@ -427,25 +466,25 @@ public class UserController extends AbstractAllController {
 	public Result sendFriendRequest(Long senderId, Long receiverId) {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try {
-			if(receiverId==null){
-				System.out.println("User id is null or empty!");
-				return badResponse("User id is null or empty");
+			if (!PipeAndFilterCheck.checkId(senderId)) {
+				System.out.println("Sender id is null or empty!");
+				return badResponse("Sender id is null or empty");
 			}
-			User receiver = userRepository.findOne(receiverId);
-			if(receiverId==null){
+			if (!PipeAndFilterCheck.checkId(receiverId)) {
+				System.out.println("Receiver id is null or empty!");
+				return badResponse("Receiver id is null or empty");
+			}
+			if (!PipeAndFilterCheck.checkValidUserId(senderId)) {
+				System.out.println("Cannot find friend request receiver");
+				return badResponse("Cannot find friend request receiver");
+			}
+			if (!PipeAndFilterCheck.checkValidUserId(receiverId)) {
 				System.out.println("Cannot find friend request sender");
 				return badResponse("Cannot find friend request sender");
 			}
 
-			if(senderId==null){
-				System.out.println("User id is null or empty!");
-				return badResponse("User id is null or empty");
-			}
+			User receiver = userRepository.findOne(receiverId);
 			User sender = userRepository.findOne(senderId);
-			if(receiverId==null){
-				System.out.println("Cannot find friend request sender");
-				return badResponse("Cannot find friend request sender");
-			}
 
 			Set<User> senders = receiver.getFriendRequestSender();
 			senders.add(sender);
@@ -453,7 +492,6 @@ public class UserController extends AbstractAllController {
 
 			userRepository.save(receiver);
 			return okResponse("Friend Request is sent");
-
 		} catch (Exception e){
 			e.printStackTrace();
 			return badResponse("Cannot send friend request");
@@ -462,16 +500,17 @@ public class UserController extends AbstractAllController {
 
 	public Result getFriendRequests(Long id) {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
-		try{
-			if(id==null){
+		try {
+			if (!PipeAndFilterCheck.checkId(id)) {
 				System.out.println("User id is null or empty!");
 				return badResponse("User id is null or empty");
 			}
-			User user = userRepository.findOne(id);
-			if(user==null){
+			if (!PipeAndFilterCheck.checkValidUserId(id)) {
 				System.out.println("Cannot find user");
 				return badResponse("Cannot find user");
 			}
+
+			User user = userRepository.findOne(id);
 			Set<User> senders = user.getFriendRequestSender();
 			StringBuilder sb = new StringBuilder();
 			sb.append("{\"friendRequestSender\":");
@@ -498,25 +537,25 @@ public class UserController extends AbstractAllController {
 	public Result acceptFriendRequest(Long receiverId, Long senderId) {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try {
-			if(receiverId==null){
-				System.out.println("User id is null or empty!");
-				return badResponse("User id is null or empty");
+			if (!PipeAndFilterCheck.checkId(receiverId)) {
+				System.out.println("Receiver id is null or empty!");
+				return badResponse("Receiver id is null or empty");
 			}
-			User receiver = userRepository.findOne(receiverId);
-			if(receiverId==null){
+			if (!PipeAndFilterCheck.checkId(senderId)) {
+				System.out.println("Sender id is null or empty!");
+				return badResponse("Sender id is null or empty");
+			}
+			if (!PipeAndFilterCheck.checkValidUserId(receiverId)) {
 				System.out.println("Cannot find friend accept receiver");
 				return badResponse("Cannot find friend accept receiver");
 			}
-
-			if(senderId==null){
-				System.out.println("User id is null or empty!");
-				return badResponse("User id is null or empty");
-			}
-			User sender = userRepository.findOne(senderId);
-			if(receiverId==null){
+			if (!PipeAndFilterCheck.checkValidUserId(senderId)) {
 				System.out.println("Cannot find friend accept sender");
 				return badResponse("Cannot find friend accept sender");
 			}
+
+			User receiver = userRepository.findOne(receiverId);
+			User sender = userRepository.findOne(senderId);
 
 			Set<User> reqSenders = receiver.getFriendRequestSender();
 			boolean flag = false;
@@ -527,7 +566,7 @@ public class UserController extends AbstractAllController {
 
 				}
 			}
-			if(flag == false) {
+			if(!flag) {
 				System.out.println("Friend Request doesn't exist");
 				return badResponse("Friend Request doesn't exist");
 			}
@@ -559,25 +598,25 @@ public class UserController extends AbstractAllController {
 	public Result rejectFriendRequest(Long receiverId, Long senderId) {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
 		try {
-			if(receiverId==null){
-				System.out.println("User id is null or empty!");
-				return badResponse("User id is null or empty");
+			if (!PipeAndFilterCheck.checkId(receiverId)) {
+				System.out.println("Receiver id is null or empty!");
+				return badResponse("Receiver id is null or empty");
 			}
-			User receiver = userRepository.findOne(receiverId);
-			if(receiverId==null){
+			if (!PipeAndFilterCheck.checkId(senderId)) {
+				System.out.println("Sender id is null or empty!");
+				return badResponse("Sender id is null or empty");
+			}
+			if (!PipeAndFilterCheck.checkValidUserId(receiverId)) {
 				System.out.println("Cannot find friend accept receiver");
 				return badResponse("Cannot find friend accept receiver");
 			}
-
-			if(senderId==null){
-				System.out.println("User id is null or empty!");
-				return badResponse("User id is null or empty");
-			}
-			User sender = userRepository.findOne(senderId);
-			if(receiverId==null){
+			if (!PipeAndFilterCheck.checkValidUserId(senderId)) {
 				System.out.println("Cannot find friend accept sender");
 				return badResponse("Cannot find friend accept sender");
 			}
+
+			User receiver = userRepository.findOne(receiverId);
+			User sender = userRepository.findOne(senderId);
 
 			Set<User> reqSenders = receiver.getFriendRequestSender();
 			boolean flag = false;
@@ -607,15 +646,16 @@ public class UserController extends AbstractAllController {
 
 	public Result getFriends(Long userId) {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
-		if(userId==null){
+		if (!PipeAndFilterCheck.checkId(userId)) {
 			System.out.println("User id is null or empty!");
 			return badResponse("User id is null or empty");
 		}
-		User user = userRepository.findOne(userId);
-		if(user==null){
+		if (!PipeAndFilterCheck.checkValidUserId(userId)) {
 			System.out.println("Cannot find user");
 			return badResponse("Cannot find user");
 		}
+
+		User user = userRepository.findOne(userId);
 
 		Set<User> friends = user.getFriends();
 		StringBuilder sb = new StringBuilder();
@@ -638,24 +678,26 @@ public class UserController extends AbstractAllController {
 
 	public Result deleteFriend(Long userId, Long friendId) {
 		UserRepository userRepository = (UserRepository) RepoFactory.getRepo(Constants.USER_REPO);
-		if(userId==null){
+
+		if (!PipeAndFilterCheck.checkId(userId)) {
 			System.out.println("User id is null or empty!");
 			return badResponse("User id is null or empty");
 		}
-		if(friendId==null){
-			System.out.println("friend id is null or empty!");
-			return badResponse("friend id is null or empty");
+		if (!PipeAndFilterCheck.checkId(friendId)) {
+			System.out.println("Friend id is null or empty!");
+			return badResponse("Friend id is null or empty");
 		}
+		if (!PipeAndFilterCheck.checkValidUserId(userId)) {
+			System.out.println("Cannot find friend accept user");
+			return badResponse("Cannot find friend accept user");
+		}
+		if (!PipeAndFilterCheck.checkValidUserId(friendId)) {
+			System.out.println("Cannot find friend accept friend");
+			return badResponse("Cannot find friend accept friend");
+		}
+
 		User user = userRepository.findOne(userId);
-		if(user==null){
-			System.out.println("Cannot find user");
-			return badResponse("Cannot find user");
-		}
 		User friend = userRepository.findOne(friendId);
-		if(friend==null){
-			System.out.println("Cannot find friend");
-			return badResponse("Cannot find friend");
-		}
 
 		Set<User> friends = user.getFriends();
 		for(User f: friends) {
