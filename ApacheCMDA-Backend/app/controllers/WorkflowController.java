@@ -475,7 +475,7 @@ public class WorkflowController extends Controller {
                 System.out.println("Cannot find workflow with given workflow id");
                 return Common.badRequestWrapper("Cannot find workflow with given workflow id");
             }
-            Comment comment = new Comment(user, timestamp, content, commentImage);
+            Comment comment = new Comment.commentBuilder(user).timestamp(timestamp).content(content).commentImage(commentImage).build();
 
             Comment savedComment = commentRepository.save(comment);
             List<Comment> list = workflow.getComments();

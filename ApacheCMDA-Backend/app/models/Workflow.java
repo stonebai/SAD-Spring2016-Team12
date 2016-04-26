@@ -300,6 +300,45 @@ public class Workflow {
 		this.wfDate = wfDate;
 	}
 
+    public static class WorkflowBuilder {
+        private JsonNode json;
+        private List<User> wfContributors;
+        private List<Workflow> wfRelated;
+        private String userName;
+        private String status;
+        private User user;
+
+
+        public WorkflowBuilder(JsonNode json) {
+        	this.json = json;
+        }
+
+        public WorkflowBuilder wfContributors(List<User> wfContributors) {
+        	this.wfContributors = wfContributors;
+        }
+
+        public WorkflowBuilder wfRelated(List<Workflow> wfRelated) {
+        	this.wfRelated = wfRelated;
+        }
+
+        public WorkflowBuilder userName(String userName) {
+        	this.userName = userName;
+        }
+
+        public WorkflowBuilder status(String status) {
+        	this.status = status;
+        }
+
+        public WorkflowBuilder user(User user) {
+        	this.user = user;
+        }
+
+        public Workflow build() {
+            return new Workflow(this);
+        }
+ 
+    }
+
 	@Override
 	public String toString() {
 		return "Workflow [id=" + id + ", userID=" + userID + ", wfTitle=" + wfTitle

@@ -97,6 +97,34 @@ public class Comment {
         this.commentImage = commentImage;
     }
 
+    public static class CommentBuilder {
+        private User user;
+        private long timestamp;
+        private String content;
+        private String commentImage;
+
+        public CommentBuilder(User user) {
+            this.user = user;
+        }
+
+        public CommentBuilder timestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public CommentBuilder content(String content) {
+            this.content = content;
+        }
+
+        public CommentBuilder commentImage(String commentImage) {
+            this.commentImage = commentImage;
+        }
+ 
+        public Comment build() {
+            return new Comment(this);
+        }
+ 
+    }
+
     @Override
     public String toString() {
         return "Comments [id="+id+", user="+user.getId()+", timestamp="+timestamp+", content="+content
