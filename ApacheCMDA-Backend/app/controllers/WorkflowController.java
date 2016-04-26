@@ -336,6 +336,24 @@ public class WorkflowController extends Controller {
         }
 
         workflow.setViewCount();
+        long newViewCount = workflow.getViewCount();
+        Top3 top3 = Top3.getInstance();
+        List<Workflow> topWorkflows = top3.getTopWorkflows();
+        // current workflow not one of the top3
+        if (!topWorkflows.contains(workflow)) {
+            if (topWorkflows.size() < 3 || 
+                workflow.getViewCount() > topWorkflows.get(topWorkflows.size() - 1).getViewCount()) {
+                top3.refreshTop3();
+            }
+        }
+        // check if top3 order needs to be changed
+        else {
+            int oldIndex = topWorkflows.indexOf(workflow);
+            if (oldIndex != 0 && topWorkflows.get(oldIndex - 1).getViewCount() < newViewCount) {
+                top3.refreshTop3();
+            }
+        }
+        
         workflowRepository.save(workflow);
         List<GroupUsers> adminGroup = groupUsersRepository.findByCreatorUser(userID);
         List<Integer> adminGroupList = new ArrayList<>();
@@ -724,8 +742,7 @@ public class WorkflowController extends Controller {
     }
 
     public Result getTop3WorkFlow() {
-        WorkflowRepository workflowRepository = (WorkflowRepository) RepoFactory.getRepo(Constants.WORKFLOW_REPO);
-        List<Workflow> topWorkflow = workflowRepository.findTop3Workflow();
+        List<Workflow> topWorkflow = Top3.getInstance().getTopWorkflows();
         String result = new GsonBuilder().excludeFieldsWithModifiers(Modifier.PROTECTED).create().toJson(topWorkflow);
         return  ok(result);
     }
