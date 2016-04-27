@@ -527,17 +527,9 @@ public class WorkflowController extends Controller {
                 System.out.println("Comment not created, expecting user id in Json data");
                 return Common.badRequestWrapper("Comment not created, expecting user id in Json data");
             }
-            if (!PipeAndFilterCheck.checkWfIdInJson(json)) {
-                System.out.println("Comment not created, expecting workflow id in Json data");
-                return Common.badRequestWrapper("Comment not created, expecting workflow id in Json data");
-            }
             if (!PipeAndFilterCheck.checkUserIdInJsonValid(json)) {
                 System.out.println("Comment not created, specified user does not exist");
                 return Common.badRequestWrapper("Comment not created, specified user does not exist");
-            }
-            if (!PipeAndFilterCheck.checkWfIdInJsonValid(json)) {
-                System.out.println("Comment not created, specified workflow does not exist");
-                return Common.badRequestWrapper("Comment not created, specified workflow does not exist");
             }
 
             long userId = json.path("userID").asLong();
@@ -548,10 +540,6 @@ public class WorkflowController extends Controller {
 
             User user = userRepository.findOne(userId);
             Workflow workflow = workflowRepository.findOne(workflowId);
-            if(workflow==null){
-                System.out.println("Cannot find workflow with given workflow id");
-                return Common.badRequestWrapper("Cannot find workflow with given workflow id");
-            }
             Comment comment =
                     new Comment.CommentBuilder(user).timestamp(timestamp).content(content).commentImage(commentImage).build();
 
