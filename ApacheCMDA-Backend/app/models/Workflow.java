@@ -111,14 +111,6 @@ public class Workflow {
 		wfDate = new Date();
 	}
 
-	public Workflow(WorkflowBuilder workflowBuilder) {
-		this.wfContributors = workflowBuilder.wfContributors;
-		this.wfRelated = workflowBuilder.wfRelated;
-		this.userName = workflowBuilder.userName;
-		this.status = workflowBuilder.status;
-		this.user = workflowBuilder.user;
-	}
-
 
 	public Set<Tag> getTags() {return this.tags;}
 
@@ -307,50 +299,6 @@ public class Workflow {
 	public void setWfDate(Date wfDate) {
 		this.wfDate = wfDate;
 	}
-
-    public static class WorkflowBuilder {
-        private JsonNode json;
-        private List<User> wfContributors;
-        private List<Workflow> wfRelated;
-        private String userName;
-        private String status;
-        private User user;
-
-
-        public WorkflowBuilder(JsonNode json) {
-        	this.json = json;
-        }
-
-        public WorkflowBuilder wfContributors(List<User> wfContributors) {
-        	this.wfContributors = wfContributors;
-			return this;
-        }
-
-        public WorkflowBuilder wfRelated(List<Workflow> wfRelated) {
-        	this.wfRelated = wfRelated;
-			return this;
-        }
-
-        public WorkflowBuilder userName(String userName) {
-        	this.userName = userName;
-			return this;
-        }
-
-        public WorkflowBuilder status(String status) {
-        	this.status = status;
-			return this;
-        }
-
-        public WorkflowBuilder user(User user) {
-        	this.user = user;
-			return this;
-        }
-
-        public Workflow build() {
-            return new Workflow(this);
-        }
- 
-    }
 
 	@Override
 	public String toString() {
