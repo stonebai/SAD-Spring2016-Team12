@@ -352,7 +352,8 @@ public class WorkflowController extends Controller {
             Workflow wf = new Workflow(node);
             res.add(wf);
         }
-        return ok(forum.render(res, session("username"), Long.parseLong(session("id"))));
+        HTMLAdapter htmlAdapter = new HTMLAdapter();
+        return ok(forum.render(res, session("username"), Long.parseLong(session("id")), htmlAdapter));
     }
 
     public static Result addSuggestion(Long wid) {

@@ -25,13 +25,13 @@
                 <div class="col-md-6">
                     <h3>Description</h3>
                     <ul class="list-group workflow-list main-list">
-                        <li class="list-group-item"><span class="badge">Name</span> @wf.getUserName</li>
-                        <li class="list-group-item"><span class="badge">Category</span> @wf.getWfCategory</li>
-                        <li class="list-group-item"><span class="badge">Detail</span> @wf.getWfDesc</li>
-                        <li class="list-group-item"><span class="badge">Input</span> @wf.getInputString</li>
-                        <li class="list-group-item"><span class="badge">Output</span> @wf.getOutputString</li>
+                        <li class="list-group-item"><span class="badge">Name</span> @(htmlAdapter.getUserName(wf))</li>
+                        <li class="list-group-item"><span class="badge">Category</span> @(htmlAdapter.get(wf, "category"))</li>
+                        <li class="list-group-item"><span class="badge">Detail</span> @(htmlAdapter.get(wf, "desc"))</li>
+                        <li class="list-group-item"><span class="badge">Input</span> @(htmlAdapter.get(wf, "input"))</li>
+                        <li class="list-group-item"><span class="badge">Output</span> @(htmlAdapter.get(wf, "output"))</li>
                         <li class="list-group-item"><span class="badge">
-                            Code</span><br><pre><code class="language-css">@wf.getWfCode</code></pre></li>
+                            Code</span><br><pre><code class="language-css">@(htmlAdapter.get(wf, "code"))</code></pre></li>
                         <li class="list-group-item"><span class="badge">Tags</span>
                             <ul class="tags">
                             @for( tag <- wf.getTags) {
@@ -58,7 +58,7 @@
                     <li class="list-group-item list-view outer-list">
                         <div class="row">
                             <div class="col-md-11">
-                                <p>@suggestions(i).getsContent()</p>
+                                <p>@(htmlAdapter.getContent(suggestions(i)))</p>
                             </div>
                             <div class="col-md-1">
                                 <p class="suggestion-like"><a href="javascript:void(0)" data-sugId="@suggestions(i).getId" class="like"></a> <span>@suggestions(i).getsVote</span></p>
@@ -100,10 +100,10 @@
                 <ul class="list-group list-view">
                 @for( i <- 0 until comments.size) {
                     <li class="list-group-item list-view outer-list">
-                        <h4><span class="red">&#35; @(i + 1)</span> &#64; @(comments(i).getUserName) <small class="right">@(new Date(comments(i).getTimestamp).toString)</small></h4>
+                        <h4><span class="red">&#35; @(i + 1)</span> &#64; @(htmlAdapter.getUserName(comments(i))) <small class="right">@(new Date(comments(i).getTimestamp).toString)</small></h4>
                         <div class="row">
                             <div class="col-md-10">
-                                <p>@comments(i).getContent</p>
+                                <p>@(htmlAdapter.getContent(comments(i)))</p>
                             </div>
                             <div class="col-md-2">
                                 <div class="comment-vote">
@@ -123,10 +123,10 @@
                         <ul class="list-group list-view">
                         @for( j <- 0 until replyRes.get(i).size) {
                             <li class="list-group-item list-view">
-                                <h5>@(replyRes.get(i).get(j).getFromUserName) <span class="shy"> &rarr; @(replyRes.get(i).get(j).getToUserName)</span>
+                                <h5>@(htmlAdapter.getUserName(replyRes.get(i).get(j), "from")) <span class="shy"> &rarr; @(htmlAdapter.getUserName(replyRes.get(i).get(j), "to"))</span>
                                 <small class="right">@(new Date(replyRes.get(i).get(j).getTimestamp).toString)</small>
                                 </h5>
-                                <p>@("\t" + replyRes.get(i).get(j).getContent)</p>
+                                <p>@("\t" + (htmlAdapter.getContent(replyRes.get(i).get(j))))</p>
 
                                 <form class="form" action="@routes.WorkflowController.addReply(replyRes.get(i).get(j).getFromUserId, comments(i).getId, wf.getId)" enctype="multipart/form-data" method="POST">
                                     <a href="javascript:void(0)" class="toggle">Reply</a>
