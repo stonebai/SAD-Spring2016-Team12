@@ -311,8 +311,9 @@ public class WorkflowController extends Controller {
         workflow.getUser().setFollowers(empty);
         workflow.getUser().setFriends(empty);
 
-        if (workflow.getStatus().equals("deleted")) {
-            return Common.badRequestWrapper("This workflow has been deleted");
+        WorkflowState state = workflow.getState();
+        if (!state.isAvailable()) {
+            return Common.badRequestWrapper("This workflow has been deleted!");
         }
         else if((int) workflow.getGroupId() != 0 && (int)workflow.getUserID() != userID.intValue()) {
             List<GroupUsers> groupList = groupUsersRepository.findByUserId(userID);
@@ -457,7 +458,7 @@ public class WorkflowController extends Controller {
             for (User followee: followees) {
                 List<Workflow> workflows = workflowRepository.findByUserID(followee.getId());
                 for(Workflow single: workflows) {
-                    if((groupsParse.contains((int)single.getGroupId()) || single.getGroupId() == 0) && !single.getStatus().equals("deleted")) {
+                    if((groupsParse.contains((int)single.getGroupId()) || single.getGroupId() == 0) && (single.getState().isAvailable())) {
                         if(adminGroup.contains((int)single.getGroupId())) {
                             single.setEdit(true);
                         }

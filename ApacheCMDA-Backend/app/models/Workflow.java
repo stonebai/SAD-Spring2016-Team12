@@ -300,6 +300,16 @@ public class Workflow {
 		this.wfDate = wfDate;
 	}
 
+	public WorkflowState getState() {
+		if (status.equals("deleted")) {
+			return new DeletedState();
+		}
+		else if (status.equals("norm")) {
+			return new NormalState();
+		}
+		return new NormalState();
+	}
+
 	@Override
 	public String toString() {
 		return "Workflow [id=" + id + ", userID=" + userID + ", wfTitle=" + wfTitle
